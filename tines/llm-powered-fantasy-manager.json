@@ -1,0 +1,4565 @@
+{
+  "schema_version": 23,
+  "standard_lib_version": 63,
+  "action_runtime_version": 15,
+  "name": "LLM-Powered Fantasy Manager",
+  "description": null,
+  "guid": "509d0ae3e4076e8e14a8335a380b6607",
+  "slug": "llm_powered_fantasy_manager",
+  "agents": [
+    {
+      "type": "Agents::WebhookAgent",
+      "name": "Receive Slack Interactivity",
+      "disabled": false,
+      "description": null,
+      "guid": "bb2584536c9398839f00d8c8bfa3adb6",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "path": "2f0653b5cd724ee799ac25c4e90731b2",
+        "secret": "c0ba0bf8025a6e78df5146d0b612bb56",
+        "verbs": "get,post"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Parse Payload",
+      "disabled": false,
+      "description": null,
+      "guid": "2a0c3c226dc41c04897bb60bd8e7493c",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "mode": "message_only",
+        "loop": false,
+        "payload": {
+          "payload": "=receive_slack_interactivity.body.payload |> JSON_PARSE(%)"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Update Slack DM",
+      "disabled": false,
+      "description": null,
+      "guid": "5e767b88fe8f1523ae887a8ecc30953b",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "url": "https://slack.com/api/chat.update",
+        "content_type": "application_json",
+        "method": "post",
+        "payload": {
+          "channel": "<<parse_payload.payload.channel.id>>",
+          "ts": " <<parse_payload.payload.message.ts>>",
+          "blocks": [
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "*Swap Undone:* Got it, players have been moved back!"
+              }
+            }
+          ]
+        },
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.slack_api_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::WebhookAgent",
+      "name": "Receive Slack Actions",
+      "disabled": false,
+      "description": null,
+      "guid": "410c4f921553405bfdbc24d3a34e3113",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "path": "b26780420f169bb9132505947384e45d",
+        "secret": "ebaac8fe970ae00d476113b7924e1e44",
+        "verbs": "get,post",
+        "response": ""
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get League Standings",
+      "disabled": false,
+      "description": null,
+      "guid": "4836efbb1316db028cf4590250f9f135",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/league/<<RESOURCE.ff_meta.league_key>>/standings",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Roster Info",
+      "disabled": false,
+      "description": null,
+      "guid": "9a286ee5e36872472d630efd9c01a88b",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/team/<<RESOURCE.ff_meta.team_key>>/roster",
+        "content_type": "json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::TriggerAgent",
+      "name": "League Standings",
+      "disabled": false,
+      "description": null,
+      "guid": "88487ef4b79ef5b5d5b5973589f03f16",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "rules": [
+          {
+            "type": "field==value",
+            "value": "/leaguestandings",
+            "path": "<<receive_slack_actions.body.command>>"
+          }
+        ]
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::TriggerAgent",
+      "name": "Roster Info",
+      "disabled": false,
+      "description": null,
+      "guid": "69df07c98a62641c584fa2c361477a28",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "rules": [
+          {
+            "type": "field==value",
+            "value": "/rosterinfo",
+            "path": "<<receive_slack_actions.body.command>>"
+          }
+        ]
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Format Standings",
+      "disabled": false,
+      "description": null,
+      "guid": "398e50d134b5623f1d4fe4c2b66285c3",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "mode": "message_only",
+        "loop": "=get_league_standings.body.fantasy_content.league.standings.teams.team",
+        "payload": "<<LOOP.index +1 & \". \" & LOOP.value.name>>"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::TriggerAgent",
+      "name": "Get Matchups",
+      "disabled": false,
+      "description": null,
+      "guid": "66779ba1fba12f539cadaebba98f81b8",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "rules": [
+          {
+            "type": "in",
+            "value": "/matchups",
+            "path": "=receive_slack_actions.body.command"
+          }
+        ]
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Format Matchups",
+      "disabled": false,
+      "description": null,
+      "guid": "5bb74c066a204ae705bdd04fb9fceb08",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "mode": "message_only",
+        "loop": "=get_matchups.body.fantasy_content.league.scoreboard.matchups.matchup |> DEFAULT(%, [])",
+        "payload": "<<\"#\" & TEXT(LOOP.index + 1)>> <<LOOP.value.teams.team |> FIRST(%).name>> (<<LOOP.value.teams.team |> FIRST(%).win_probability*100 |> ROUND(%, 2) & \"%\">>) vs <<LOOP.value.teams.team |> LAST(%).name>> (<<LOOP.value.teams.team |> LAST(%).win_probability*100 |> ROUND(%, 2) & \"%\">>)\n"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Matchups",
+      "disabled": false,
+      "description": null,
+      "guid": "d3264c244dc17009f42788fd45548db9",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/league/<<RESOURCE.ff_meta.league_key>>/scoreboard\r",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Format Roster",
+      "disabled": false,
+      "description": null,
+      "guid": "3ea5c9ddc0baa6da98910f8e0776f18b",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "mode": "message_only",
+        "loop": "=get_roster_info.body.fantasy_content.team.roster.players.player",
+        "payload": "<<LOOP.value.name.full>> (<<LOOP.value.display_position>> - <<LOOP.value.editorial_team_abbr>>)"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "View Transactions",
+      "disabled": false,
+      "description": null,
+      "guid": "56c637eae3244552ff2a8f005dd2f681",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/league/<<RESOURCE.ff_meta.league_key>>/transactions",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::TriggerAgent",
+      "name": "Get Transactions",
+      "disabled": false,
+      "description": null,
+      "guid": "b3a14fd635d706620a5f84d8d6638fcf",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "rules": [
+          {
+            "type": "in",
+            "value": "/transactions",
+            "path": "=receive_slack_actions.body.command"
+          }
+        ]
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Format Transactions",
+      "disabled": false,
+      "description": null,
+      "guid": "59a327b418b8c730224f42b1daa69334",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "mode": "message_only",
+        "loop": "=view_transactions.body.fantasy_content.league.transactions.transaction |> DEFAULT(%, []) |> SLICE_ARRAY(%, 0, 5)",
+        "payload": {
+          "transaction": "<<\"Team: \" & IF(INCLUDES(LOOP.value.type, \"/\"), FIRST(LOOP.value.players.player).transaction_data.destination_team_name, LOOP.value.players.player.transaction_data.destination_team_name)>>\n<<\"Type: \" & LOOP.value.type |> REPLACE(%, \"add\", \"Add\") |> REPLACE(%, \"drop\", \"Drop\")>>\n<<\"Status: \" & CAPITALIZE(LOOP.value.status)>>\n<<INCLUDES(LOOP.value.type, \"/\") |> REPLACE(IF(%, FIRST(LOOP.value.players.player).transaction_data.type & \": \" & FIRST(LOOP.value.players.player).name.full & \" (\" & FIRST(LOOP.value.players.player).display_position & \")\", (LOOP.value.type & \": \" & LOOP.value.players.player.name.full & \" (\" & LOOP.value.players.player.display_position & \")\")), \"add\", \"Added\")>>\n<<IF(INCLUDES(LOOP.value.type, \"/\"), LAST(LOOP.value.players.player).transaction_data.type & \": \" & LAST(LOOP.value.players.player).name.full & \" (\" & LAST(LOOP.value.players.player).display_position) & \")\" |> REPLACE(%, \"drop\", \"Dropped\")>>\n"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::RunScriptAgent",
+      "name": "Parse Report",
+      "disabled": false,
+      "description": null,
+      "guid": "58c5e58a25365f225dda210d182a22f6",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "language": "python",
+        "timeout": 10,
+        "script": "import re\nfrom bs4 import BeautifulSoup\n\ndef main(input):\n    soup = BeautifulSoup(input, 'lxml')\n    table = soup.find('table', id='gamedayscalltable')\n    headers = [heading.text for heading in table.find_all('th')]\n\n    table_rows = [row for row in table.find_all('tr')]\n        \n    results = [{headers[index]: cell.text for index, cell in enumerate(row.find_all(\"td\"))} for row in table_rows]\n    results = [result for result in results if result]\n        \n    for result in results:\n      for i, v in result.items():\n        for substring in ['\\n', ' No new player Notes', ' Player Note', ' New']:\n          v = v.replace(substring, '')\n        result[i] = v\n            \n        try:\n            name_pattern = r'[A-Z][^A-Z]*'\n            result['Name'] = ' '.join(re.findall(name_pattern, result['Name'])[:2]).strip()\n            result['Name'] = re.sub(r'\\s+', ' ', result['Name'])\n            result['Team'] = result.pop('Depth Chart')\n        except Exception as e:\n            print(e)\n\n    return results",
+        "input": "=get_report.body",
+        "requirements": "beautifulsoup4==4.12.3\nlxml"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Set Variables",
+      "disabled": false,
+      "description": null,
+      "guid": "9d5e6bc4c7037d195e7a7e03d693721a",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "mode": "message_only",
+        "loop": false,
+        "payload": {
+          "report": "gamedaycalls"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": [
+        {
+          "cron": "0 9 * * *",
+          "timezone": "America/New_York"
+        }
+      ]
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Update a JSON resource",
+      "disabled": false,
+      "description": "Update a resource in Tines.\n\nLink to API documentation: https://www.tines.com/api/resources/update",
+      "guid": "586ab455ae880de173626af7077591e3",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "url": "https://<<INPUT.tenant_domain>>/api/v1/global_resources/<<INPUT.resource_id>>",
+        "method": "put",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.tines_credential>>"
+        },
+        "content_type": "application_json",
+        "local": {
+          "all_parameters": {
+            "name": "=INPUT.resource_name",
+            "folder_id": "=INPUT.folder_id",
+            "read_access": "=DEFAULT(FORCE_ARRAY(INPUT.read_access)[0], \"TEAM\")",
+            "shared_team_slugs": "=IF(FORCE_ARRAY(INPUT.read_access)[0]= \"SPECIFIC_TEAMS\", SPLIT(DOWNCASE(REPLACE(INPUT.shared_team_names, \" \", \"_\")), \",\"), [])",
+            "description": "<<INPUT.description>>",
+            "test_resource_enabled": "=INPUT.test_resource_enabled",
+            "value": "=INPUT.json_resource_value",
+            "is_test": "=INPUT.is_test_resource"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.all_parameters,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        },
+        "payload": "=LOCAL.final_payload"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "51729e5aba6b0d74218dd3aec3ae5714b6f24065a1c9162264f078617864ebf4",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Set Variables",
+      "disabled": false,
+      "description": null,
+      "guid": "063a380f148feab08ccbd265c841b0fe",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "mode": "message_only",
+        "loop": false,
+        "payload": {
+          "report": "injuries"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": [
+        {
+          "cron": "30 8 * * *",
+          "timezone": "America/New_York"
+        }
+      ]
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Report",
+      "disabled": false,
+      "description": null,
+      "guid": "e05dc58e03fbd8ad54ea330ec1e61c3f",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://football.fantasysports.yahoo.com/f1/<<set_variables.report>>",
+        "content_type": "application_json",
+        "method": "get"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": []
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Send Slack DM",
+      "disabled": false,
+      "description": "Sends a message to a public channel, private channel, or direct message/IM channel that has rich, interactive elements that you can design in Slack's Block Kit Builder. \n\nLink to documentation: https://api.slack.com/methods/chat.postMessage\nLink to Block Kit Builder Overview: https://api.slack.com/block-kit\nLink to Block Kit Builder: https://api.slack.com/tools/block-kit-builder \n\nRequired scope: chat:write",
+      "guid": "4ce33cfbf6ceb56ffc3bf029a31dd914",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "content_type": "json; charset=utf-8",
+        "method": "post",
+        "payload": "=LOCAL.final_payload",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.slack_credential>>"
+        },
+        "local": {
+          "all_options": {
+            "channel": "<<INPUT.channel_user_id>>",
+            "blocks": "=DEFAULT(INPUT.message.blocks, INPUT.message)",
+            "icon_emoji": "<<INPUT.icon_emoji>>",
+            "icon_url": "<<INPUT.icon_url>>",
+            "link_names": "=INPUT.link_names",
+            "thread_ts": "\"<<INPUT.thread_timestamp>>\"",
+            "username": "<<INPUT.username>>",
+            "metadata": "=INPUT.metadata",
+            "mrkdwn": "=INPUT.markdown",
+            "reply_broadcast": "=INPUT.send_reply_to_channel",
+            "unfurl_links": "=INPUT.unfurl_links",
+            "unfurl_media": "=INPUT.unfurl_media",
+            "parse": "<<INPUT.parse>>"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.all_options,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "52e0649e3d147759de03210df9686e0b4a86587edd0fde896e11fae52acf1f7e",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Send Slack DM",
+      "disabled": false,
+      "description": "Sends a message to a public channel, private channel, or direct message/IM channel that has rich, interactive elements that you can design in Slack's Block Kit Builder. \n\nLink to documentation: https://api.slack.com/methods/chat.postMessage\nLink to Block Kit Builder Overview: https://api.slack.com/block-kit\nLink to Block Kit Builder: https://api.slack.com/tools/block-kit-builder \n\nRequired scope: chat:write",
+      "guid": "c031fe8e3ffe6550e750bbcda6482af0",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "content_type": "json; charset=utf-8",
+        "method": "post",
+        "payload": "=LOCAL.final_payload",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.slack_credential>>"
+        },
+        "local": {
+          "all_options": {
+            "channel": "<<INPUT.channel_user_id>>",
+            "blocks": "=DEFAULT(INPUT.message.blocks, INPUT.message)",
+            "icon_emoji": "<<INPUT.icon_emoji>>",
+            "icon_url": "<<INPUT.icon_url>>",
+            "link_names": "=INPUT.link_names",
+            "thread_ts": "\"<<INPUT.thread_timestamp>>\"",
+            "username": "<<INPUT.username>>",
+            "metadata": "=INPUT.metadata",
+            "mrkdwn": "=INPUT.markdown",
+            "reply_broadcast": "=INPUT.send_reply_to_channel",
+            "unfurl_links": "=INPUT.unfurl_links",
+            "unfurl_media": "=INPUT.unfurl_media",
+            "parse": "<<INPUT.parse>>"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.all_options,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "52e0649e3d147759de03210df9686e0b4a86587edd0fde896e11fae52acf1f7e",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Send Slack DM",
+      "disabled": false,
+      "description": "Sends a message to a public channel, private channel, or direct message/IM channel that has rich, interactive elements that you can design in Slack's Block Kit Builder. \n\nLink to documentation: https://api.slack.com/methods/chat.postMessage\nLink to Block Kit Builder Overview: https://api.slack.com/block-kit\nLink to Block Kit Builder: https://api.slack.com/tools/block-kit-builder \n\nRequired scope: chat:write",
+      "guid": "c5eb666fdb0347ff5b061c5980c3af18",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "content_type": "json; charset=utf-8",
+        "method": "post",
+        "payload": "=LOCAL.final_payload",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.slack_credential>>"
+        },
+        "local": {
+          "all_options": {
+            "channel": "<<INPUT.channel_user_id>>",
+            "blocks": "=DEFAULT(INPUT.message.blocks, INPUT.message)",
+            "icon_emoji": "<<INPUT.icon_emoji>>",
+            "icon_url": "<<INPUT.icon_url>>",
+            "link_names": "=INPUT.link_names",
+            "thread_ts": "\"<<INPUT.thread_timestamp>>\"",
+            "username": "<<INPUT.username>>",
+            "metadata": "=INPUT.metadata",
+            "mrkdwn": "=INPUT.markdown",
+            "reply_broadcast": "=INPUT.send_reply_to_channel",
+            "unfurl_links": "=INPUT.unfurl_links",
+            "unfurl_media": "=INPUT.unfurl_media",
+            "parse": "<<INPUT.parse>>"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.all_options,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "52e0649e3d147759de03210df9686e0b4a86587edd0fde896e11fae52acf1f7e",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Send Slack DM",
+      "disabled": false,
+      "description": "Sends a message to a public channel, private channel, or direct message/IM channel that has rich, interactive elements that you can design in Slack's Block Kit Builder. \n\nLink to documentation: https://api.slack.com/methods/chat.postMessage\nLink to Block Kit Builder Overview: https://api.slack.com/block-kit\nLink to Block Kit Builder: https://api.slack.com/tools/block-kit-builder \n\nRequired scope: chat:write",
+      "guid": "146621c11a790587f380098a4328de3c",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "content_type": "json; charset=utf-8",
+        "method": "post",
+        "payload": "=LOCAL.final_payload",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.slack_credential>>"
+        },
+        "local": {
+          "all_options": {
+            "channel": "<<INPUT.channel_user_id>>",
+            "blocks": "=DEFAULT(INPUT.message.blocks, INPUT.message)",
+            "icon_emoji": "<<INPUT.icon_emoji>>",
+            "icon_url": "<<INPUT.icon_url>>",
+            "link_names": "=INPUT.link_names",
+            "thread_ts": "\"<<INPUT.thread_timestamp>>\"",
+            "username": "<<INPUT.username>>",
+            "metadata": "=INPUT.metadata",
+            "mrkdwn": "=INPUT.markdown",
+            "reply_broadcast": "=INPUT.send_reply_to_channel",
+            "unfurl_links": "=INPUT.unfurl_links",
+            "unfurl_media": "=INPUT.unfurl_media",
+            "parse": "<<INPUT.parse>>"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.all_options,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "52e0649e3d147759de03210df9686e0b4a86587edd0fde896e11fae52acf1f7e",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Start and Bench Players",
+      "disabled": false,
+      "description": null,
+      "guid": "df78a9ce3f6777077c11ab97c05681ed",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/team/<<RESOURCE.ff_meta.team_key>>/roster/",
+        "content_type": "application/xml",
+        "method": "put",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        },
+        "payload": "<?xml version=\"1.0\"?>\r\n<fantasy_content>\r\n  <roster>\r\n    <coverage_type>week</coverage_type>\r\n    <week><<parse_summary.week>></week>\r\n\r<players>\r\n      <player>\r\n        <player_key><<parse_summary.benched>></player_key>\r\n        <position><<parse_summary.position>></position>\r\n      </player>\r\n      <player>\r\n        <player_key><<parse_summary.started>></player_key>\r\n        <position>BN</position>\r\n      </player>\r\n    </players>\r\n  </roster>\r\n</fantasy_content>"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::TriggerAgent",
+      "name": "Undo Swap",
+      "disabled": false,
+      "description": null,
+      "guid": "88a483bc9c1c9cf56fa5eb99f76cd926",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "rules": [
+          {
+            "type": "field==value",
+            "value": "undo_swap",
+            "path": "<<parse_payload.payload.actions[0].action_id>>"
+          }
+        ]
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Parse Summary",
+      "disabled": false,
+      "description": null,
+      "guid": "b33aeba0774daab17ae7c7c117e9d487",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "mode": "message_only",
+        "loop": false,
+        "payload": "=parse_payload.payload.actions[0].selected_option.value |> JSON_PARSE(%)"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Games",
+      "disabled": false,
+      "description": "",
+      "guid": "dc7bf60e4d17fc335418ef22e77abab3",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/games;seasons=<<DATE(\"now\", \"%Y\")>>",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": []
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Leagues",
+      "disabled": false,
+      "description": null,
+      "guid": "60db59e76823dd0c816498ccb2d00000",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/games;game_keys=<<get_games.body.fantasy_content.users.user.games.game.game_key>>/leagues",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": []
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Create FF Meta Resource",
+      "disabled": false,
+      "description": "Creates a resource in Tines that has a JSON object or array of values.\n\nPlease note, for test resources that will be used in TEST mode of change control, the optional value 'Live Resource ID' must be used. In this scenario, the other optional values (i.e. resource description, read access, team ID, folder ID) will default to the specified live resource ID.\n\nLink to API documentation: https://www.tines.com/api/resources/create-json",
+      "guid": "1ee87b9205f80139449208dfb0325ad4",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "url": "https://<<INPUT.tenant_domain>>/api/v1/global_resources",
+        "method": "post",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.tines_credential>>"
+        },
+        "content_type": "application_json",
+        "local": {
+          "all_parameters": {
+            "name": "=INPUT.resource_name",
+            "team_id": "=INPUT.team_id",
+            "folder_id": "=INPUT.folder_id",
+            "read_access": "=DEFAULT(FORCE_ARRAY(INPUT.read_access)[0], \"TEAM\")",
+            "shared_team_slugs": "=IF(FORCE_ARRAY(INPUT.read_access)[0]= \"SPECIFIC_TEAMS\", SPLIT(DOWNCASE(REPLACE(INPUT.shared_team_names, \" \", \"_\")), \",\"), [])",
+            "description": "<<INPUT.description>>",
+            "live_resource_id": "=INPUT.live_resource_id",
+            "value": "=INPUT.resource_json_value"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.all_parameters,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        },
+        "payload": "=LOCAL.final_payload"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "41a3c3f40794cf0c53e1520c7090efae62944a3b147b22efc63804fd7094c155",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Teams",
+      "disabled": false,
+      "description": null,
+      "guid": "8ff03ea9bed07d4fabb1cb43efefe4e9",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/league/<<get_leagues.body.fantasy_content.users.user.games.game.leagues.league.league_key>>/teams;use_login=1",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": []
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Get Gameday Calls",
+      "disabled": false,
+      "description": null,
+      "guid": "7a1ca285f28f0b39ded6b743f7fecbd6",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "mode": "message_only",
+        "loop": false,
+        "payload": {
+          "records": "=RESOURCE.gamedaycalls"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": []
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Roster Info",
+      "disabled": false,
+      "description": null,
+      "guid": "77b94dc7a9fc6249d5a773442cccd1d7",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/team/<<RESOURCE.ff_meta.team_key>>/roster",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get League Standings",
+      "disabled": false,
+      "description": null,
+      "guid": "5b3ea6f2add278ae659f919debfa01a5",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/league/<<RESOURCE.ff_meta.league_key>>/standings",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": []
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Get Current Week",
+      "disabled": false,
+      "description": null,
+      "guid": "cc1347da2e733824c963bd3bc4b11ca6",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "mode": "message_only",
+        "loop": false,
+        "payload": {
+          "current_week": "<<get_league_standings.body.fantasy_content.league.current_week>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Format Roster",
+      "disabled": false,
+      "description": null,
+      "guid": "0b6b5cdf17ceaf4cd7abb9f4bbeddd3d",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "mode": "message_only",
+        "loop": "=get_roster_info.body.fantasy_content.team.roster.players.player",
+        "payload": {
+          "player_key": "=LOOP.value.player_key",
+          "player_id": "=LOOP.value.player_id",
+          "player_name": "=LOOP.value.name",
+          "position": "=LOOP.value.selected_position.position",
+          "eligible_position": "=LOOP.value.eligible_positions",
+          "bye_weeks": "=LOOP.value.bye_weeks"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Update Injury Status",
+      "disabled": false,
+      "description": null,
+      "guid": "f6c402ece8ac75030c06010fc0156524",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "mode": "message_only",
+        "loop": "=format_roster",
+        "payload": "=LOOP.value.player_name.full |> WHERE(RESOURCE.gamedaycalls, \"Name\", %)[0] |> DEFAULT(%, \"\") |> SET_KEY(LOOP.value, \"injury_status\", %.Status)"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Optimize Roster",
+      "disabled": false,
+      "description": "Creates a model response for the given chat conversation.\n\nLink to documentation:\nhttps://platform.openai.com/docs/api-reference/chat/create",
+      "guid": "cfce7943d143e25158bd51bd33eb4983",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:200521dbe4e6126d515dcb06d4bcb051",
+      "options": {
+        "url": "https://api.openai.com/v1/chat/completions",
+        "content_type": "application_json",
+        "method": "post",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.openai_credential>>"
+        },
+        "payload": "=LOCAL.final_payload",
+        "local": {
+          "optional_parameters": {
+            "messages": "=INPUT.messages",
+            "model": "=INPUT.model",
+            "frequency_penalty": "=INPUT.frequency_penalty",
+            "logit_bias": "=INPUT.logit_bias",
+            "logprobs": "=INPUT.logprobs",
+            "top_logprobs": "=INPUT.top_logprobs",
+            "max_completion_tokens": "=INPUT.max_completion_tokens",
+            "n": "=INPUT.n",
+            "presence_penalty": "=INPUT.presence_penalty",
+            "response_format": "=INPUT.response_format",
+            "seed": "=INPUT.seed",
+            "service_tier": "=FORCE_ARRAY(INPUT.service_tier)[0]",
+            "stop": "=INPUT.stop",
+            "stream": "=INPUT.stream",
+            "stream_options": "=INPUT.stream_options",
+            "temperature": "=INPUT.temperature",
+            "top_p": "=INPUT.top_p",
+            "tools": "=INPUT.tools",
+            "tool_choice": "=INPUT.tool_choice",
+            "parallel_tool_calls": "=INPUT.parallel_tool_calls",
+            "user": "=INPUT.user"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.optional_parameters,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        },
+        "timeout": "180"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "8fa1da5ac491fd18ab6fd7bba288e904ef98a65e5a163ba8634024376263f755",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Player Info",
+      "disabled": false,
+      "description": null,
+      "guid": "51849d1530e7e26fbe4f6b3b7e44c43b",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://football.fantasysports.yahoo.com/f1/<<RESOURCE.ff_meta.league_id>>/<<RESOURCE.ff_meta.team_id>>",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::RunScriptAgent",
+      "name": "Parse Player Stats",
+      "disabled": false,
+      "description": null,
+      "guid": "c031a5ab61e9d56f54183f7fc6dc88a3",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "language": "python",
+        "timeout": 10,
+        "script": "from bs4 import BeautifulSoup\nimport json\n\ndef main(input):\n    # Parse the HTML content using BeautifulSoup\n    soup = BeautifulSoup(input, 'html.parser')\n\n    # Find the table with ID 'statTable0'\n    roster_table = soup.find('table', {'id': 'statTable0'})\n\n    # Initialize a list to hold player data\n    players = []\n\n    # Check if the table exists\n    if roster_table:\n        # Iterate over the table rows\n        for row in roster_table.find_all('tr')[1:]:  # Skip the header row\n            cols = row.find_all('td')\n            if len(cols) > 1:\n                # Extract the player name using regex\n                player_name = cols[1].get_text(separator=\"\\n\").lstrip().split(\"\\n\")[0]\n                player_data = {\n                    'player_name': player_name,\n                    'proj_points': cols[6].get_text(strip=True),\n                    'started': cols[7].get_text(strip=True),\n                    'rostered': cols[8].get_text(strip=True)\n                }\n                players.append(player_data)\n\n        # Convert the list of players to JSON\n        return players\n\n    else:\n        print(\"Table with ID 'statTable0' not found in the HTML.\")",
+        "input": "=get_player_info.body",
+        "requirements": "beautifulsoup4==4.12.3"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Map Projected Points",
+      "disabled": false,
+      "description": null,
+      "guid": "74a49da30d2f8c347d236e712bfee5ca",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "mode": "message_only",
+        "loop": "=update_injury_status",
+        "payload": "=LOOP.value.player_name.full |> WHERE(parse_player_stats.output, \"player_name\", %)[0] |> MERGE(%, LOOP.value)"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Apply Roster Updates",
+      "disabled": false,
+      "description": null,
+      "guid": "c9a26128021b82201c3bcbe4381b1d73",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://fantasysports.yahooapis.com/fantasy/v2/team/<<RESOURCE.ff_meta.team_key>>/roster/",
+        "content_type": "application/xml",
+        "method": "put",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        },
+        "payload": "=LOCAL.xml",
+        "local": {
+          "xml": "=optimize_roster.body.choices[0].message.content |> SPLIT(%, \"### XML_START ###\")[-1] |> SPLIT(%, \"### XML_END ###\")[0] |> STRIP(%)"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Available Defense",
+      "disabled": false,
+      "description": null,
+      "guid": "530fa4a9b9ec920406cb2188d906834c",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://football.fantasysports.yahoo.com/f1/<<RESOURCE.ff_meta.league_id>>/players",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        },
+        "payload": {
+          "sort": "PTS",
+          "sdir": "1",
+          "status": "A",
+          "pos": "DEF",
+          "stat1": "S_PS_2024"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::RunScriptAgent",
+      "name": "Parse Available Defense",
+      "disabled": false,
+      "description": null,
+      "guid": "77fe858c6769c739bda1779ea656aab5",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "language": "python",
+        "timeout": "60",
+        "script": "from bs4 import BeautifulSoup\n\ndef main(input):\n    # Parse the page with BeautifulSoup\n    soup = BeautifulSoup(input, 'html.parser')\n\n    # Find the first table on the page\n    table = soup.find('table')\n    if not table:\n        return {\"error\": \"No table found on the page\"}\n\n    # Use the second header row as keys\n    header_rows = table.find_all('thead')[0].find_all('tr')\n    if len(header_rows) < 2:\n        return {\"error\": \"Insufficient header rows\"}\n\n    headers = [th.get_text(strip=True).replace('\\ue002', '').lower() for th in header_rows[1].find_all('th') if th]\n    headers[1] = 'player_name'  # Rename the second header as 'player_name'\n\n    # Extract rows of data\n    rows = []\n    for tr in table.find('tbody').find_all('tr'):\n        cells = [td.get_text(separator='\\n').lstrip().split('\\n')[0] for td in tr.find_all('td')]\n        if cells:\n            # Create a dictionary only with headers that have valid keys\n            row_data = {headers[i]: cells[i] for i in range(len(headers)) if headers[i]}\n            rows.append(row_data)\n\n    return rows  # Return the list of dictionaries containing row data\n",
+        "input": "=get_available_defense.body",
+        "requirements": "beautifulsoup4==4.12.3"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Available Players",
+      "disabled": false,
+      "description": null,
+      "guid": "56bda8a6c5338c9a13497d114d11f070",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://football.fantasysports.yahoo.com/f1/<<RESOURCE.ff_meta.league_id>>/players",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        },
+        "payload": {
+          "sort": "PTS",
+          "sdir": "1",
+          "status": "A",
+          "pos": "O",
+          "stat1": "S_PS_2024"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::RunScriptAgent",
+      "name": "Parse Available Players",
+      "disabled": false,
+      "description": null,
+      "guid": "ccd7db212243083569db25d59c1849fa",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "language": "python",
+        "timeout": "60",
+        "script": "from bs4 import BeautifulSoup\n\ndef main(input):\n    # Parse the page with BeautifulSoup\n    soup = BeautifulSoup(input, 'html.parser')\n\n    # Find the first table on the page\n    table = soup.find('table')\n    if not table:\n        return {\"error\": \"No table found on the page\"}\n\n    # Use the second header row as keys\n    header_rows = table.find_all('thead')[0].find_all('tr')\n    if len(header_rows) < 2:\n        return {\"error\": \"Insufficient header rows\"}\n\n    headers = [th.get_text(strip=True).replace('\\ue002', '').lower() for th in header_rows[1].find_all('th') if th]\n    headers[1] = 'player_name'  # Rename the second header as 'player_name'\n\n    # Extract rows of data\n    rows = []\n    for tr in table.find('tbody').find_all('tr'):\n        cells = [td.get_text(separator='\\n').lstrip().split('\\n')[0] for td in tr.find_all('td')]\n        if cells:\n            # Create a dictionary only with headers that have valid keys\n            row_data = {headers[i]: cells[i] for i in range(len(headers)) if headers[i]}\n            rows.append(row_data)\n\n    return rows  # Return the list of dictionaries containing row data\n",
+        "input": "=get_available_players.body",
+        "requirements": "beautifulsoup4==4.12.3"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Combine Available Players",
+      "disabled": false,
+      "description": null,
+      "guid": "7a565df9c178000a97d6106520a60b37",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:c74526aa89ca11bdef1bde6ae4c5ab22",
+      "options": {
+        "mode": "message_only",
+        "loop": false,
+        "payload": "=LOCAL.results",
+        "local": {
+          "players": "=parse_available_players.output",
+          "defense": "=parse_available_defense.output |> SLICE_ARRAY(%, 0, 5)",
+          "results": "=CONCAT(LOCAL.players, LOCAL.defense)"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Update Injury Status",
+      "disabled": false,
+      "description": null,
+      "guid": "9fe6e11d0f41c5c0933d1e68c7714007",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "mode": "message_only",
+        "loop": "=combine_available_players",
+        "payload": "=LOOP.value.player_name |> \nWHERE(RESOURCE.gamedaycalls, \"Name\", %)[0] |> \nDEFAULT(%, \"\") |> \nSET_KEY(LOOP.value, \"injury_status\", %.Status)"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Suggest Add/Drops",
+      "disabled": false,
+      "description": "Creates a model response for the given chat conversation.\n\nLink to documentation:\nhttps://platform.openai.com/docs/api-reference/chat/create",
+      "guid": "3fc19b95676dcc224f472833d8f4efc4",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:200521dbe4e6126d515dcb06d4bcb051",
+      "options": {
+        "url": "https://api.openai.com/v1/chat/completions",
+        "content_type": "application_json",
+        "method": "post",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.openai_credential>>"
+        },
+        "payload": "=LOCAL.final_payload",
+        "local": {
+          "optional_parameters": {
+            "messages": "=INPUT.messages",
+            "model": "=INPUT.model",
+            "frequency_penalty": "=INPUT.frequency_penalty",
+            "logit_bias": "=INPUT.logit_bias",
+            "logprobs": "=INPUT.logprobs",
+            "top_logprobs": "=INPUT.top_logprobs",
+            "max_completion_tokens": "=INPUT.max_completion_tokens",
+            "n": "=INPUT.n",
+            "presence_penalty": "=INPUT.presence_penalty",
+            "response_format": "=INPUT.response_format",
+            "seed": "=INPUT.seed",
+            "service_tier": "=FORCE_ARRAY(INPUT.service_tier)[0]",
+            "stop": "=INPUT.stop",
+            "stream": "=INPUT.stream",
+            "stream_options": "=INPUT.stream_options",
+            "temperature": "=INPUT.temperature",
+            "top_p": "=INPUT.top_p",
+            "tools": "=INPUT.tools",
+            "tool_choice": "=INPUT.tool_choice",
+            "parallel_tool_calls": "=INPUT.parallel_tool_calls",
+            "user": "=INPUT.user"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.optional_parameters,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        },
+        "timeout": "180"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "8fa1da5ac491fd18ab6fd7bba288e904ef98a65e5a163ba8634024376263f755",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Parse Output",
+      "disabled": false,
+      "description": null,
+      "guid": "3a4feda3d8da7cd6967dcfa6aafd8573",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:c74526aa89ca11bdef1bde6ae4c5ab22",
+      "options": {
+        "mode": "message_only",
+        "loop": false,
+        "payload": "=suggest_add_drops.body.choices[0].message.content |>\nSPLIT(%, \"```json\")[-1] |>\nSPLIT(%, \"```\")[0] |>\nSTRIP(%) |>\nJSON_PARSE(%)"
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Format Suggestions",
+      "disabled": false,
+      "description": null,
+      "guid": "0587eb7032f11cf91b5ba1b90a222a14",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:c74526aa89ca11bdef1bde6ae4c5ab22",
+      "options": {
+        "mode": "message_only",
+        "loop": "=parse_output",
+        "payload": {
+          "suggestion": [
+            {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*Add:* <<LOOP.value.add_player_name>> "
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Drop:* <<LOOP.value.drop_player_name>>"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Rationale:* <<LOOP.value.rationale>>"
+                }
+              ]
+            },
+            {
+              "type": "divider"
+            }
+          ]
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Send Slack DM",
+      "disabled": false,
+      "description": "Sends a message to a public channel, private channel, or direct message/IM channel that has rich, interactive elements that you can design in Slack's Block Kit Builder. \n\nLink to documentation: https://api.slack.com/methods/chat.postMessage\nLink to Block Kit Builder Overview: https://api.slack.com/block-kit\nLink to Block Kit Builder: https://api.slack.com/tools/block-kit-builder \n\nRequired scope: chat:write",
+      "guid": "20201e5de3725e2fc4707c4e6b1f1155",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+      "options": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "content_type": "json; charset=utf-8",
+        "method": "post",
+        "payload": "=LOCAL.final_payload",
+        "headers": {
+          "Authorization": "Bearer <<INPUT.slack_credential>>"
+        },
+        "local": {
+          "all_options": {
+            "channel": "<<INPUT.channel_user_id>>",
+            "blocks": "=DEFAULT(INPUT.message.blocks, INPUT.message)",
+            "icon_emoji": "<<INPUT.icon_emoji>>",
+            "icon_url": "<<INPUT.icon_url>>",
+            "link_names": "=INPUT.link_names",
+            "thread_ts": "\"<<INPUT.thread_timestamp>>\"",
+            "username": "<<INPUT.username>>",
+            "metadata": "=INPUT.metadata",
+            "mrkdwn": "=INPUT.markdown",
+            "reply_broadcast": "=INPUT.send_reply_to_channel",
+            "unfurl_links": "=INPUT.unfurl_links",
+            "unfurl_media": "=INPUT.unfurl_media",
+            "parse": "<<INPUT.parse>>"
+          },
+          "final_payload": "=REJECT(\n  LOCAL.all_options,\n  LAMBDA(\n    item,\n    OR(\n      item = NULL,\n      IF(\n        OR(\n          TYPE(item) = \"TrueClass\",\n          TYPE(item) = \"FalseClass\",\n          TYPE(item) = \"Integer\"\n        ),\n        IS_EMPTY(TEXT(item)),\n        IS_EMPTY(item)\n      )\n    )\n  )\n)"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": "52e0649e3d147759de03210df9686e0b4a86587edd0fde896e11fae52acf1f7e",
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::EventTransformationAgent",
+      "name": "Slack Header",
+      "disabled": false,
+      "description": null,
+      "guid": "0a3456a025a1871c31d99abbda0e58de",
+      "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:c74526aa89ca11bdef1bde6ae4c5ab22",
+      "options": {
+        "mode": "message_only",
+        "loop": false,
+        "payload": {
+          "type": "header",
+          "text": {
+            "type": "plain_text",
+            "text": "Add/Drop Suggestions",
+            "emoji": true
+          }
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    },
+    {
+      "type": "Agents::HTTPRequestAgent",
+      "name": "Get Available Players",
+      "disabled": false,
+      "description": null,
+      "guid": "8ab7fcb9d54376155e187f0c6333dce0",
+      "origin_story_identifier": "cloud:bb348bfdaaa30aaafd44b16b09b6960d:3ed3c613796e5f702e5068eef44c2e66",
+      "options": {
+        "url": "https://football.fantasysports.yahoo.com/f1/<<RESOURCE.ff_meta.league_id>>/players",
+        "content_type": "application_json",
+        "method": "get",
+        "headers": {
+          "Authorization": "Bearer <<CREDENTIAL.ff_token>>"
+        },
+        "payload": {
+          "sort": "PTS",
+          "sdir": "1",
+          "status": "A",
+          "pos": "O",
+          "stat1": "S_PS_2024"
+        }
+      },
+      "reporting": {
+        "time_saved_value": 0,
+        "time_saved_unit": "minutes"
+      },
+      "monitoring": {
+        "monitor_all_events": false,
+        "monitor_failures": false,
+        "monitor_no_events_emitted": null
+      },
+      "template": {
+        "created_from_template_guid": null,
+        "created_from_template_version": null,
+        "template_tags": []
+      },
+      "width": null,
+      "schedule": null
+    }
+  ],
+  "diagram_notes": [
+    {
+      "content": "# Slash Command Handler",
+      "position": [
+        510,
+        420
+      ],
+      "guid": "6f7fe44a262faf7946ecd59d791403fa",
+      "width": 215
+    },
+    {
+      "content": "# Report Update Handler\n\nThis scheduled flow updates both the gamedaycalls and injuries resources. I don't know the difference between the two because I don't know anything about football, so we gather both for good measure.",
+      "position": [
+        525,
+        1125
+      ],
+      "guid": "c73109f9cd7d91ffdb5382d4c2fd5cdb",
+      "width": 419
+    },
+    {
+      "content": "[Yahoo FF API Docs](https://developer.yahoo.com/fantasysports/guide/)",
+      "position": [
+        -1320,
+        375
+      ],
+      "guid": "6236e6bbeae7c4be610a19c424ed936b",
+      "width": 239
+    },
+    {
+      "content": "# Slack Interactivity Handler",
+      "position": [
+        1380,
+        420
+      ],
+      "guid": "d654f1aa8d79bf71506c3942db10c133",
+      "width": 229
+    },
+    {
+      "content": "# Initial Setup\n\nThis flow will setup the `ff_meta` resource with your league and team keys.",
+      "position": [
+        -60,
+        375
+      ],
+      "guid": "65e2c8ef838f38bf8a486f4b2cef5441",
+      "width": 188
+    },
+    {
+      "content": "### **Steps to Set Up Yahoo Fantasy Football API Key in Tines:**\n\n1. **Create a Yahoo Developer Account:**\n   - Go to the [Yahoo Developer Network](https://developer.yahoo.com).\n   - Sign in with your Yahoo account or create one if needed.\n\n2. **Create a New App in Yahoo Developer:**\n   - From the Yahoo Developer dashboard, click **My Apps**.\n   - Select **Create an App** and fill in the necessary details such as app name, description, and permissions.\n\n3. **Set API Permissions:**\n   - Under **API Permissions**, ensure you select **Fantasy Sports** so the app can access Fantasy Football data.\n\n4. **Obtain OAuth2 Credentials:**\n   - After app creation, Yahoo will provide a **Client ID** and **Client Secret**.\n   - Take note of these as they will be needed to configure Tines agents.\n\n5. **Configure Redirect URI for Tines:**\n   - In the app's settings, set the **Redirect URI** to the Tines OAuth Redirect URI format:\n     - Use `https://<your_tines_instance>.tines.io/oauth/complete` as the redirect URI.\n\n6. **Set Up OAuth2 Authentication in Tines:**\n   - In Tines, create an **OAuth Authentication credential**:\n     - Go to **Credentials** → **New Credential** → **OAuth**.\n     - Input your **Client ID**, **Client Secret**, and the **Authorization URL** (`https://api.login.yahoo.com/oauth2/request_auth`).\n     - Set the **Token URL** to `https://api.login.yahoo.com/oauth2/get_token`.\n     - For the **Redirect URI**, use the same Tines OAuth Redirect URI (`https://<your_tines_instance>.tines.io/oauth/complete`).",
+      "position": [
+        -1320,
+        435
+      ],
+      "guid": "13924476efbd346bca3446c3223ed9e9",
+      "width": 494
+    },
+    {
+      "content": "{\n  \"Projected Stats\": {\n    \"Week 10 (proj)\": \"S_PW_10\",\n    \"Week 11 (proj)\": \"S_PW_11\",\n    \"Week 12 (proj)\": \"S_PW_12\",\n    \"Next 4 Weeks (proj)\": \"S_PN4W\",\n    \"Season (proj)\": \"S_PS_2024\",\n    \"Remaining Games (proj)\": \"S_PSR_2024\"\n  },\n  \"Weekly Stats\": {\n    \"Week 8\": \"S_W_8\",\n    \"Week 9\": \"S_W_9\",\n    \"Week 10\": \"S_W_10\",\n    \"Last 4 Weeks (total)\": \"S_L4W\"\n  },\n  \"Season Stats\": {\n    \"Season (total)\": \"S_S_2024\",\n    \"2023 Season (total)\": \"S_S_2023\",\n    \"2022 Season (total)\": \"S_S_2022\",\n    \"Splits: Season\": \"S_SPS_2024\",\n    \"Splits: Career\": \"S_SPC\"\n  },\n  \"Advanced Stats\": {\n    \"2024\": \"ADVST_ADVST_2024\",\n    \"2023\": \"ADVST_ADVST_2023\"\n  },\n  \"Average Stats\": {\n    \"Season (avg)\": \"S_AS_2024\",\n    \"Last 4 Weeks (avg)\": \"S_AL4W\"\n  },\n  \"Fantasy\": {\n    \"Ranks\": \"K_K\",\n    \"Game Day Calls\": \"G_G\",\n    \"Research\": \"R_O\",\n    \"Fantasy Matchups\": \"M_W\",\n    \"Opponents\": \"O_O\"\n  }\n}\n",
+      "position": [
+        -1335,
+        1185
+      ],
+      "guid": "5b24e7e37cf3aa1eba0a6f0fe0fac5b4",
+      "width": 270
+    },
+    {
+      "content": "# Plaintext: Stat Parameter Map\n\nThe below can be used to translate raw stat parameters into their plaintext values. These are needed when using the `stat1` filter.",
+      "position": [
+        -1335,
+        1065
+      ],
+      "guid": "eae53b3f5c1046ad581d5551baabc76b",
+      "width": 290
+    },
+    {
+      "content": "# Parse Players Table\n\nYahoo's API doesn't give us projected points directly, so we're going to scrape the raw HTML and turn it into JSON we can use.",
+      "position": [
+        -495,
+        450
+      ],
+      "guid": "b550c2e6cedea7ea7561875e4e62c6e7",
+      "width": 270
+    },
+    {
+      "content": "# Enrich Roster Data\n\nWe need to give the LLM a complete picture, so we're going to pull our roster and enrich it with things like injury status and projected weekly point values.",
+      "position": [
+        -480,
+        1185
+      ],
+      "guid": "cfbd67b47cc75753484f4529d2fedd96",
+      "width": 270
+    },
+    {
+      "content": "# Put the LLM to Work\n\nSend our enriched roster JSON to OpenAI, define its role, task, and expected output.\n\nThen we parse the XML it sends back and apply its optimized roster via the Yahoo FF API. ",
+      "position": [
+        -990,
+        1545
+      ],
+      "guid": "10812cff58cf77c2a7b42268f8af5414",
+      "width": 270
+    },
+    {
+      "content": "# Add/Drop Suggestions\n\nGather available offensive and defensive positions, ranked by projected season points.\n\nAgain, Yahoo's API doesn't return projected points - So we'll scrape and parse the raw HTML using beautifulsoup.",
+      "position": [
+        -180,
+        1665
+      ],
+      "guid": "3da89186bba22d72caa92d0c2c69905e",
+      "width": 270
+    },
+    {
+      "content": "# Pass it Off to the LLM Again\n\nNext, we task the LLM with finding potentially-valuable add/drop suggestions.\n\nWe adjust its task and inputs slightly so it can evaluate our roster against the data we just gathered.",
+      "position": [
+        -180,
+        2085
+      ],
+      "guid": "5a1170766846866d86bc68b5d8eb32ce",
+      "width": 270
+    },
+    {
+      "content": "# Notify via Slack\n\nNotify the owner of the Fantasy team of the LLM's suggestions. These include the players it proposes to add/drop, as well as its rationale for doing so.",
+      "position": [
+        -705,
+        2595
+      ],
+      "guid": "c5c79f64cd28649c78c2c488a461f516",
+      "width": 270
+    }
+  ],
+  "links": [
+    {
+      "source": 0,
+      "receiver": 1
+    },
+    {
+      "source": 1,
+      "receiver": 26
+    },
+    {
+      "source": 3,
+      "receiver": 6
+    },
+    {
+      "source": 3,
+      "receiver": 7
+    },
+    {
+      "source": 3,
+      "receiver": 9
+    },
+    {
+      "source": 3,
+      "receiver": 14
+    },
+    {
+      "source": 4,
+      "receiver": 8
+    },
+    {
+      "source": 5,
+      "receiver": 12
+    },
+    {
+      "source": 6,
+      "receiver": 4
+    },
+    {
+      "source": 7,
+      "receiver": 5
+    },
+    {
+      "source": 8,
+      "receiver": 21
+    },
+    {
+      "source": 9,
+      "receiver": 11
+    },
+    {
+      "source": 10,
+      "receiver": 23
+    },
+    {
+      "source": 11,
+      "receiver": 10
+    },
+    {
+      "source": 12,
+      "receiver": 22
+    },
+    {
+      "source": 13,
+      "receiver": 15
+    },
+    {
+      "source": 14,
+      "receiver": 13
+    },
+    {
+      "source": 15,
+      "receiver": 24
+    },
+    {
+      "source": 16,
+      "receiver": 18
+    },
+    {
+      "source": 17,
+      "receiver": 20
+    },
+    {
+      "source": 19,
+      "receiver": 20
+    },
+    {
+      "source": 20,
+      "receiver": 16
+    },
+    {
+      "source": 25,
+      "receiver": 2
+    },
+    {
+      "source": 26,
+      "receiver": 27
+    },
+    {
+      "source": 27,
+      "receiver": 25
+    },
+    {
+      "source": 28,
+      "receiver": 29
+    },
+    {
+      "source": 29,
+      "receiver": 31
+    },
+    {
+      "source": 31,
+      "receiver": 30
+    },
+    {
+      "source": 32,
+      "receiver": 33
+    },
+    {
+      "source": 33,
+      "receiver": 36
+    },
+    {
+      "source": 34,
+      "receiver": 35
+    },
+    {
+      "source": 35,
+      "receiver": 32
+    },
+    {
+      "source": 36,
+      "receiver": 37
+    },
+    {
+      "source": 37,
+      "receiver": 41
+    },
+    {
+      "source": 38,
+      "receiver": 42
+    },
+    {
+      "source": 39,
+      "receiver": 40
+    },
+    {
+      "source": 40,
+      "receiver": 34
+    },
+    {
+      "source": 41,
+      "receiver": 38
+    },
+    {
+      "source": 41,
+      "receiver": 43
+    },
+    {
+      "source": 43,
+      "receiver": 44
+    },
+    {
+      "source": 44,
+      "receiver": 45
+    },
+    {
+      "source": 45,
+      "receiver": 46
+    },
+    {
+      "source": 46,
+      "receiver": 47
+    },
+    {
+      "source": 47,
+      "receiver": 48
+    },
+    {
+      "source": 48,
+      "receiver": 49
+    },
+    {
+      "source": 49,
+      "receiver": 50
+    },
+    {
+      "source": 50,
+      "receiver": 51
+    },
+    {
+      "source": 51,
+      "receiver": 53
+    },
+    {
+      "source": 53,
+      "receiver": 52
+    }
+  ],
+  "diagram_layout": "{\"bb2584536c9398839f00d8c8bfa3adb6\":[1380,480],\"2a0c3c226dc41c04897bb60bd8e7493c\":[1380,600],\"5e767b88fe8f1523ae887a8ecc30953b\":[1380,1095],\"410c4f921553405bfdbc24d3a34e3113\":[510,480],\"4836efbb1316db028cf4590250f9f135\":[510,720],\"9a286ee5e36872472d630efd9c01a88b\":[795,720],\"88487ef4b79ef5b5d5b5973589f03f16\":[510,600],\"69df07c98a62641c584fa2c361477a28\":[795,600],\"398e50d134b5623f1d4fe4c2b66285c3\":[510,840],\"66779ba1fba12f539cadaebba98f81b8\":[225,600],\"5bb74c066a204ae705bdd04fb9fceb08\":[225,840],\"d3264c244dc17009f42788fd45548db9\":[225,720],\"3ea5c9ddc0baa6da98910f8e0776f18b\":[795,840],\"56c637eae3244552ff2a8f005dd2f681\":[1080,720],\"b3a14fd635d706620a5f84d8d6638fcf\":[1080,600],\"59a327b418b8c730224f42b1daa69334\":[1080,840],\"58c5e58a25365f225dda210d182a22f6\":[525,1485],\"9d5e6bc4c7037d195e7a7e03d693721a\":[525,1245],\"586ab455ae880de173626af7077591e3\":[525,1605],\"063a380f148feab08ccbd265c841b0fe\":[810,1245],\"e05dc58e03fbd8ad54ea330ec1e61c3f\":[525,1365],\"4ce33cfbf6ceb56ffc3bf029a31dd914\":[510,960],\"c031fe8e3ffe6550e750bbcda6482af0\":[795,960],\"c5eb666fdb0347ff5b061c5980c3af18\":[225,960],\"146621c11a790587f380098a4328de3c\":[1080,960],\"df78a9ce3f6777077c11ab97c05681ed\":[1380,975],\"88a483bc9c1c9cf56fa5eb99f76cd926\":[1380,720],\"b33aeba0774daab17ae7c7c117e9d487\":[1380,855],\"dc7bf60e4d17fc335418ef22e77abab3\":[-60,495],\"60db59e76823dd0c816498ccb2d00000\":[-60,615],\"1ee87b9205f80139449208dfb0325ad4\":[-60,855],\"8ff03ea9bed07d4fabb1cb43efefe4e9\":[-60,735],\"7a1ca285f28f0b39ded6b743f7fecbd6\":[-690,930],\"77b94dc7a9fc6249d5a773442cccd1d7\":[-690,1050],\"5b3ea6f2add278ae659f919debfa01a5\":[-690,690],\"cc1347da2e733824c963bd3bc4b11ca6\":[-690,810],\"0b6b5cdf17ceaf4cd7abb9f4bbeddd3d\":[-690,1170],\"f6c402ece8ac75030c06010fc0156524\":[-690,1290],\"cfce7943d143e25158bd51bd33eb4983\":[-690,1530],\"51849d1530e7e26fbe4f6b3b7e44c43b\":[-690,420],\"c031a5ab61e9d56f54183f7fc6dc88a3\":[-690,555],\"74a49da30d2f8c347d236e712bfee5ca\":[-690,1410],\"c9a26128021b82201c3bcbe4381b1d73\":[-690,1650],\"530fa4a9b9ec920406cb2188d906834c\":[-405,1545],\"77fe858c6769c739bda1779ea656aab5\":[-405,1665],\"56bda8a6c5338c9a13497d114d11f070\":[-405,1785],\"ccd7db212243083569db25d59c1849fa\":[-405,1905],\"7a565df9c178000a97d6106520a60b37\":[-405,2025],\"9fe6e11d0f41c5c0933d1e68c7714007\":[-405,2145],\"3fc19b95676dcc224f472833d8f4efc4\":[-405,2265],\"3a4feda3d8da7cd6967dcfa6aafd8573\":[-405,2385],\"0587eb7032f11cf91b5ba1b90a222a14\":[-405,2505],\"20201e5de3725e2fc4707c4e6b1f1155\":[-405,2745],\"0a3456a025a1871c31d99abbda0e58de\":[-405,2625],\"8ab7fcb9d54376155e187f0c6333dce0\":[-1020,1065]}",
+  "send_to_story_enabled": false,
+  "entry_agent_guid": null,
+  "exit_agent_guids": [],
+  "exit_agent_guid": null,
+  "api_entry_action_guids": [],
+  "api_exit_action_guids": [],
+  "keep_events_for": 604800,
+  "reporting_status": true,
+  "send_to_story_access": null,
+  "story_library_metadata": {
+    "tags": [
+      "Slack"
+    ],
+    "icons": null,
+    "visibility": null
+  },
+  "parent_only_send_to_story": false,
+  "monitor_failures": false,
+  "send_to_stories": [],
+  "synchronous_webhooks_enabled": false,
+  "send_to_story_access_source": 0,
+  "send_to_story_skill_use_requires_confirmation": true,
+  "pages": [],
+  "tags": [
+    {
+      "name": "Slack"
+    }
+  ],
+  "time_saved_unit": "minutes",
+  "time_saved_value": 0,
+  "origin_story_identifier": "cloud:98bf19cf1391e1805daf0cbdc3239e4a:9f14dfcd7d12904a7c5651dbe89b3389",
+  "integration_product": null,
+  "integration_vendor": null,
+  "llm_product_instructions": "",
+  "exported_at": "2024-11-08T22:45:01Z",
+  "icon": ":football:",
+  "integrations": [
+    {
+      "action_inputs": [
+        {
+          "name": "Channel / User ID",
+          "description": "You can use a channel name (like ‘#general’) or an ID (like ‘C1234567890’). For non-public channels, specify the ID; this includes private channels, multi-person direct message channels (use the group ID), or DMs to a specific user (use the user ID).",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\" <<RESOURCE.slack_ff_channel>>\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Slack Credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 1073741824,
+          "value": "\"=CREDENTIAL.slack_api_token\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon emoji",
+          "description": "Emoji to use as the icon for this message (i.e. :chart_with_upwards_trend:). Overrides Icon URL input.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 1610612736,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon URL",
+          "description": "URL to an image to use as the icon for this message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 1879048192,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Link names?",
+          "description": "Find and link user groups. No longer supports linking individual users; use syntax shown in [Mentioning Users](https://api.slack.com/reference/surfaces/formatting#mentioning-users) instead.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2013265920,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Metadata",
+          "description": "JSON object with event_type and event_payload fields, presented as a URL-encoded string. Metadata you post to Slack is accessible to any app or user who is a member of that workspace. ex: {\"event_type\": \"task_created\", \"event_payload\": { \"id\": \"11223\", \"title\": \"Redesign Homepage\"}}",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2080374784,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Markdown",
+          "description": "Select 'no' to disable Slack markup parsing. Enabled by default.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2113929216,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Parse",
+          "description": "Change how messages are treated. See [further details](https://api.slack.com/methods/chat.postMessage#formatting).",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2130706432,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Send reply to channel?",
+          "description": "Used in conjunction with input 'Thread timestamp' and indicates whether reply should be made visible to everyone in the channel or conversation. Defaults to false.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2139095040,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Thread timestamp",
+          "description": "Provide another message's ts value to make this message a reply. Avoid using a reply's ts value; use its parent instead.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2143289344,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl media?",
+          "description": "Select 'no' to disable unfurling of media content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2145386496,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Username",
+          "description": "Specify your bot's username that will send the message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2146435072,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Message",
+          "description": "Use [Slack's Block Kit Builder](https://app.slack.com/block-kit-builder) to build your message. Then, click the 'Copy Payload' button on the top right of the block kit builder and paste it into the ‘Plain code’ tab here when you’re done. ",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2146959360,
+          "value": "{\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"Active Transactions\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<<format_transactions |> JOIN(%, \\\"\\\\n\\\") |> DEFAULT(%, \\\"No transactions to report.\\\")>>\"}}]}",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl links?",
+          "description": "Select 'yes' to enable unfurling of primarily text-based content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147221504,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "146621c11a790587f380098a4328de3c",
+      "product": "Slack"
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "Tenant domain",
+          "description": "The domain of the tenant.",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\"<<META.tenant.domain>>\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Shared team names",
+          "description": "Comma separated list of teams' names where this resource can be used. Required to set 'read access' parameter to 'SPECIFIC_TEAMS'.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 536870912,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Tines credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 1073741824,
+          "value": "\"=CREDENTIAL.tines_token\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Folder ID",
+          "description": "ID of the folder where the resource will be located. You can identify the folder ID within the URL of your Tines tenant on the tenant overview page by selecting an item within the folder.",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 1879048192,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Read access",
+          "description": "Control where this resource can be used. Defaults to 'team'. The 'specific teams' option is a premium feature that may not be available in your tenant and if used requires the additional parameter 'Shared team names'.",
+          "required": false,
+          "type": "OPTION",
+          "ranking": 2013265920,
+          "value": "\"\"",
+          "options": [
+            "TEAM",
+            "GLOBAL",
+            "SPECIFIC_TEAMS"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Description",
+          "description": "Description of the resource.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2113929216,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Resource ID",
+          "description": "The ID of the resource you are querying for. You can identify this with the INFO key.",
+          "required": true,
+          "type": "NUMBER",
+          "ranking": 2145386496,
+          "value": "\"=INFO.resource[set_variables.report].id\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Resource name",
+          "description": "Name of the resource.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147221504,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Test resource enabled?",
+          "description": "Select 'yes' if the resource is enabled for using a test resource.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147475456,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Is test resource?",
+          "description": "Select 'yes' if the updated value should apply to the test resource rather than the live resource.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147479552,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "JSON resource value",
+          "description": "The value of the resource. This can be an object with key/value pairs or an array of values. If you'd like to update a different part of the resource and keep the same value, just use a pill in formula mode referencing your resource.",
+          "required": true,
+          "type": "OBJECT",
+          "ranking": 2147482624,
+          "value": "\"=parse_report.output\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "586ab455ae880de173626af7077591e3",
+      "product": "Tines"
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "Channel / User ID",
+          "description": "You can use a channel name (like ‘#general’) or an ID (like ‘C1234567890’). For non-public channels, specify the ID; this includes private channels, multi-person direct message channels (use the group ID), or DMs to a specific user (use the user ID).",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\" <<RESOURCE.slack_ff_channel>>\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Slack Credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 939524096,
+          "value": "\"=CREDENTIAL.slack_api_token\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon emoji",
+          "description": "Emoji to use as the icon for this message (i.e. :chart_with_upwards_trend:). Overrides Icon URL input.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 1879048192,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon URL",
+          "description": "URL to an image to use as the icon for this message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2013265920,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Link names?",
+          "description": "Find and link user groups. No longer supports linking individual users; use syntax shown in [Mentioning Users](https://api.slack.com/reference/surfaces/formatting#mentioning-users) instead.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2080374784,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Metadata",
+          "description": "JSON object with event_type and event_payload fields, presented as a URL-encoded string. Metadata you post to Slack is accessible to any app or user who is a member of that workspace. ex: {\"event_type\": \"task_created\", \"event_payload\": { \"id\": \"11223\", \"title\": \"Redesign Homepage\"}}",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2113929216,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Markdown",
+          "description": "Select 'no' to disable Slack markup parsing. Enabled by default.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2130706432,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Parse",
+          "description": "Change how messages are treated. See [further details](https://api.slack.com/methods/chat.postMessage#formatting).",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2139095040,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Send reply to channel?",
+          "description": "Used in conjunction with input 'Thread timestamp' and indicates whether reply should be made visible to everyone in the channel or conversation. Defaults to false.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2143289344,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Thread timestamp",
+          "description": "Provide another message's ts value to make this message a reply. Avoid using a reply's ts value; use its parent instead.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2145386496,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl media?",
+          "description": "Select 'no' to disable unfurling of media content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2146959360,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Username",
+          "description": "Specify your bot's username that will send the message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147221504,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Message",
+          "description": "Use [Slack's Block Kit Builder](https://app.slack.com/block-kit-builder) to build your message. Then, click the 'Copy Payload' button on the top right of the block kit builder and paste it into the ‘Plain code’ tab here when you’re done. ",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2147352576,
+          "value": "{\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"League Standings\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<<format_standings |> JOIN(%, \\\"\\\\n\\\")>>\"}}]}",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl links?",
+          "description": "Select 'yes' to enable unfurling of primarily text-based content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147418112,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "4ce33cfbf6ceb56ffc3bf029a31dd914",
+      "product": "Slack"
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "Channel / User ID",
+          "description": "You can use a channel name (like ‘#general’) or an ID (like ‘C1234567890’). For non-public channels, specify the ID; this includes private channels, multi-person direct message channels (use the group ID), or DMs to a specific user (use the user ID).",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\" <<RESOURCE.slack_ff_channel>>\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Slack Credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 1073741824,
+          "value": "\"=CREDENTIAL.slack_api_token\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon emoji",
+          "description": "Emoji to use as the icon for this message (i.e. :chart_with_upwards_trend:). Overrides Icon URL input.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 1610612736,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon URL",
+          "description": "URL to an image to use as the icon for this message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 1879048192,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Link names?",
+          "description": "Find and link user groups. No longer supports linking individual users; use syntax shown in [Mentioning Users](https://api.slack.com/reference/surfaces/formatting#mentioning-users) instead.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2013265920,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Metadata",
+          "description": "JSON object with event_type and event_payload fields, presented as a URL-encoded string. Metadata you post to Slack is accessible to any app or user who is a member of that workspace. ex: {\"event_type\": \"task_created\", \"event_payload\": { \"id\": \"11223\", \"title\": \"Redesign Homepage\"}}",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2080374784,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Markdown",
+          "description": "Select 'no' to disable Slack markup parsing. Enabled by default.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2113929216,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Parse",
+          "description": "Change how messages are treated. See [further details](https://api.slack.com/methods/chat.postMessage#formatting).",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2130706432,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Send reply to channel?",
+          "description": "Used in conjunction with input 'Thread timestamp' and indicates whether reply should be made visible to everyone in the channel or conversation. Defaults to false.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2139095040,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Thread timestamp",
+          "description": "Provide another message's ts value to make this message a reply. Avoid using a reply's ts value; use its parent instead.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2143289344,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl media?",
+          "description": "Select 'no' to disable unfurling of media content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2145386496,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Username",
+          "description": "Specify your bot's username that will send the message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2146435072,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Message",
+          "description": "Use [Slack's Block Kit Builder](https://app.slack.com/block-kit-builder) to build your message. Then, click the 'Copy Payload' button on the top right of the block kit builder and paste it into the ‘Plain code’ tab here when you’re done. ",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2146959360,
+          "value": "{\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"Current Roster\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<<format_roster |> JOIN(%, \\\"\\\\n\\\")>>\"}}]}",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl links?",
+          "description": "Select 'yes' to enable unfurling of primarily text-based content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147221504,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "c031fe8e3ffe6550e750bbcda6482af0",
+      "product": "Slack"
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "Channel / User ID",
+          "description": "You can use a channel name (like ‘#general’) or an ID (like ‘C1234567890’). For non-public channels, specify the ID; this includes private channels, multi-person direct message channels (use the group ID), or DMs to a specific user (use the user ID).",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\" <<RESOURCE.slack_ff_channel>>\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Slack Credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 1073741824,
+          "value": "\"=CREDENTIAL.slack_api_token\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon emoji",
+          "description": "Emoji to use as the icon for this message (i.e. :chart_with_upwards_trend:). Overrides Icon URL input.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 1610612736,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon URL",
+          "description": "URL to an image to use as the icon for this message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 1879048192,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Link names?",
+          "description": "Find and link user groups. No longer supports linking individual users; use syntax shown in [Mentioning Users](https://api.slack.com/reference/surfaces/formatting#mentioning-users) instead.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2013265920,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Metadata",
+          "description": "JSON object with event_type and event_payload fields, presented as a URL-encoded string. Metadata you post to Slack is accessible to any app or user who is a member of that workspace. ex: {\"event_type\": \"task_created\", \"event_payload\": { \"id\": \"11223\", \"title\": \"Redesign Homepage\"}}",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2080374784,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Markdown",
+          "description": "Select 'no' to disable Slack markup parsing. Enabled by default.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2113929216,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Parse",
+          "description": "Change how messages are treated. See [further details](https://api.slack.com/methods/chat.postMessage#formatting).",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2130706432,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Send reply to channel?",
+          "description": "Used in conjunction with input 'Thread timestamp' and indicates whether reply should be made visible to everyone in the channel or conversation. Defaults to false.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2139095040,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Thread timestamp",
+          "description": "Provide another message's ts value to make this message a reply. Avoid using a reply's ts value; use its parent instead.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2143289344,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl media?",
+          "description": "Select 'no' to disable unfurling of media content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2145386496,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Username",
+          "description": "Specify your bot's username that will send the message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2146435072,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Message",
+          "description": "Use [Slack's Block Kit Builder](https://app.slack.com/block-kit-builder) to build your message. Then, click the 'Copy Payload' button on the top right of the block kit builder and paste it into the ‘Plain code’ tab here when you’re done. ",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2146959360,
+          "value": "{\"blocks\":[{\"type\":\"header\",\"text\":{\"type\":\"plain_text\",\"text\":\"This Week's Matchups\",\"emoji\":true}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<<format_matchups |> JOIN(%, \\\"\\\\n\\\") |> DEFAULT(%, \\\"No matchups to report.\\\")>>\"}}]}",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl links?",
+          "description": "Select 'yes' to enable unfurling of primarily text-based content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147221504,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "c5eb666fdb0347ff5b061c5980c3af18",
+      "product": "Slack"
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "Tenant domain",
+          "description": "The domain of the tenant.",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\"<<META.tenant.domain>>\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Tines credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 1073741824,
+          "value": "\"=CREDENTIAL.tines_token\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Resource name",
+          "description": "Name of the resource.",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 1610612736,
+          "value": "\"ff_meta\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Folder ID",
+          "description": "ID of the folder where the resource will be located. You can identify the folder ID within the URL of your Tines tenant on the tenant overview page by selecting an item within the folder.",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2146959360,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Read access",
+          "description": "Control where this resource can be used. Defaults to 'team'. The 'specific teams' option is a premium feature that may not be available in your tenant and if used requires the additional parameter 'Shared team names'.",
+          "required": false,
+          "type": "OPTION",
+          "ranking": 2147221504,
+          "value": "\"\"",
+          "options": [
+            "TEAM",
+            "GLOBAL",
+            "SPECIFIC_TEAMS"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Shared team names",
+          "description": "Comma separated list of teams' names where this resource can be used. Required to set 'read access' parameter to 'SPECIFIC_TEAMS'.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147352576,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Description",
+          "description": "Description of the resource.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147418112,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Resource JSON value",
+          "description": "The value of the resource. This can be an object with key/value pairs or an array of values.",
+          "required": true,
+          "type": "OBJECT",
+          "ranking": 2147467264,
+          "value": "{\"league_key\":\"=get_leagues.body.fantasy_content.users.user.games.game.leagues.league.league_key\",\"league_id\":\"=get_leagues.body.fantasy_content.users.user.games.game.leagues.league.league_id\",\"team_key\":\"=get_teams.body.fantasy_content.league.teams.team.team_key\",\"team_id\":\"=get_teams.body.fantasy_content.league.teams.team.team_id\"}",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Live resource ID",
+          "description": "If creating a test resource for change control TEST mode, specify the ID of the corresponding live resource.",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2147475456,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Team ID",
+          "description": "ID of Tines Team where the resource will be located. You can identify the team ID within the URL of your Tines tenant on the tenant overview page by selecting an item within the team.",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2147479552,
+          "value": "\"=META.team.id\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "1ee87b9205f80139449208dfb0325ad4",
+      "product": "Tines"
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "OpenAI credential",
+          "description": "",
+          "required": true,
+          "type": "CREDENTIAL",
+          "ranking": 0,
+          "value": "\"=CREDENTIAL.openai\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Model",
+          "description": "ID of the model to use. See the model endpoint compatibility table for details on which models work with the Chat API.",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 1073741824,
+          "value": "\"gpt-4o\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Messages",
+          "description": "A list of messages comprising the conversation so far. [Example Python code](https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models).",
+          "required": true,
+          "type": "OBJECT",
+          "ranking": 1610612736,
+          "value": "[{\"role\":\"system\",\"content\":\"You are an expert Fantasy Football manager with advanced knowledge of Yahoo Fantasy Football’s API, player statistics, injury reports, and roster optimization.\"},{\"role\":\"user\",\"content\":\"Your task is to evaluate a Fantasy Football roster for this week’s matchup, recommend optimal swaps based on projections, injuries, and bye weeks, and output the updated full roster in XML format. Ensure that:\\r\\n- All starting positions (e.g., QB, WR1, WR2, RB1, RB2, TE, W/R/T, K, DEF) are filled with players expected to play.\\r\\n- Exactly **six players are designated as \\\"BN\\\"** (bench).\\r\\n- Avoid any duplicate positions, ensuring only one player per position to prevent API errors.\\r\\n\\r\\n### Starting Criteria:\\r\\n1. **Projected Points Comparison**: For each position, if a benched player has a higher projected weekly point total than a starter, recommend a swap.\\r\\n2. **Injury Status Exclusion**: Exclude any player from the starting lineup who has an injury status of \\\"IR,\\\" \\\"O,\\\" \\\"NFI-R,\\\" or \\\"SUS.\\\"\\r\\n3. **Bye Week Exclusion**: Ensure no starting players are on a bye week. If a starting player has a bye, replace them with the highest-projected, active bench player at the same position.\\r\\n\\r\\n### XML Output Requirements:\\r\\nGenerate XML for the entire roster, ensuring that each position is filled with one unique player. Here’s the template:\\r\\n\\r\\n```xml\\r\\n### XML_START ###\\r\\n<?xml version=\\\"1.0\\\"?>\\r\\n<fantasy_content>\\r\\n  <roster>\\r\\n    <coverage_type>week</coverage_type>\\r\\n    <week><<get_current_week.current_week>></week> \\n    <players>\\n      <!-- Starting Positions -->\\n      <player>\\n        <player_key>{{player_key_qb}}</player_key>\\n        <position>QB</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_wr1}}</player_key>\\n        <position>WR</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_wr2}}</player_key>\\n        <position>WR</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_rb1}}</player_key>\\n        <position>RB</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_rb2}}</player_key>\\n        <position>RB</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_te}}</player_key>\\n        <position>TE</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_flex}}</player_key>\\n        <position>W/R/T</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_k}}</player_key>\\n        <position>K</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_def}}</player_key>\\n        <position>DEF</position>\\n      </player>\\n\\n      <!-- Bench Positions (exactly 6 players) -->\\n      <player>\\n        <player_key>{{player_key_bench1}}</player_key>\\n        <position>BN</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_bench2}}</player_key>\\n        <position>BN</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_bench3}}</player_key>\\n        <position>BN</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_bench4}}</player_key>\\n        <position>BN</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_bench5}}</player_key>\\n        <position>BN</position>\\n      </player>\\n      <player>\\n        <player_key>{{player_key_bench6}}</player_key>\\n        <position>BN</position>\\n      </player>\\n    </players>\\n  </roster>\\n</fantasy_content>\\n### XML_END ###\\n```\\n\\n### Example XML Output\\nWhen generating the full roster, ensure each player has a unique position assignment to avoid API conflicts. The output would resemble:\\n\\n```xml\\n### XML_START ###\\n<?xml version=\\\"1.0\\\"?>\\n<fantasy_content>\\n  <roster>\\n    <coverage_type>week</coverage_type>\\n    <week>10</week>\\n    <players>\\n      <!-- Starting Positions -->\\n      <player>\\n        <player_key>449.p.30977</player_key>\\n        <position>QB</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.33398</player_key>\\n        <position>WR</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.31868</player_key>\\n        <position>WR</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.41048</player_key>\\n        <position>RB</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.33508</player_key>\\n        <position>RB</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.40878</player_key>\\n        <position>TE</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.29399</player_key>\\n        <position>W/R/T</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.34344</player_key>\\n        <position>K</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.100021</player_key>\\n        <position>DEF</position>\\n      </player>\\n\\n      <!-- Bench Positions (exactly 6 players) -->\\n      <player>\\n        <player_key>449.p.32723</player_key>\\n        <position>BN</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.40126</player_key>\\n        <position>BN</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.40095</player_key>\\n        <position>BN</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.34104</player_key>\\n        <position>BN</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.28227</player_key>\\n        <position>BN</position>\\n      </player>\\n      <player>\\n        <player_key>449.p.22244</player_key>\\n        <position>BN</position>\\n      </player>\\n    </players>\\n  </roster>\\n</fantasy_content>\\n### XML_END ###\\n```\\n\\n\\nCurrent Week:\\n<<get_current_week.current_week>>\\n\\nCurrent Roster:\\n<<map_projected_points>>\"}]",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{\"type\":\"array\",\"items\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"system\"],\"description\":\"The role of the message author, in this case system.\"},\"content\":{\"oneOf\":[{\"type\":\"string\"},{\"type\":\"array\"}],\"description\":\"The contents of the system message.\"},\"name\":{\"type\":\"string\",\"description\":\"An optional name for the participant.\"}},\"required\":[\"role\",\"content\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"user\"],\"description\":\"The role of the message author, in this case user.\"},\"content\":{\"oneOf\":[{\"type\":\"string\"},{\"type\":\"array\"}],\"description\":\"The contents of the user message.\"},\"name\":{\"type\":\"string\",\"description\":\"An optional name for the participant.\"}},\"required\":[\"role\",\"content\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"assistant\"],\"description\":\"The role of the message author, in this case assistant.\"},\"content\":{\"oneOf\":[{\"type\":\"string\"},{\"type\":\"array\"},{\"type\":\"null\"}],\"description\":\"The contents of the assistant message.\"},\"refusal\":{\"oneOf\":[{\"type\":\"string\"},{\"type\":\"null\"}],\"description\":\"The refusal message by the assistant.\"},\"name\":{\"type\":\"string\",\"description\":\"An optional name for the participant.\"},\"tool_calls\":{\"type\":\"array\",\"description\":\"The tool calls generated by the model, such as function calls.\"}},\"required\":[\"role\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"tool\"],\"description\":\"The role of the message author, in this case tool.\"},\"content\":{\"oneOf\":[{\"type\":\"string\"},{\"type\":\"array\"}],\"description\":\"The contents of the tool message.\"},\"tool_call_id\":{\"type\":\"string\",\"description\":\"Tool call that this message is responding to.\"}},\"required\":[\"role\",\"content\",\"tool_call_id\"],\"additionalProperties\":false}]}}"
+        },
+        {
+          "name": "Logit bias",
+          "description": "Modify the likelihood of specified tokens appearing in the completion.\n\nAccepts a JSON object that maps tokens (specified by their token ID in the tokenizer) to an associated bias value from -100 to 100. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.\n",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 1879048192,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Logprobs",
+          "description": "Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the `content` of `message`.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2013265920,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Top logprobs",
+          "description": "An integer between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability. `logprobs` must be set to `true` if this parameter is used.",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2080374784,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "N",
+          "description": "How many chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep `n` as `1` to minimize costs.",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2113929216,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Seed",
+          "description": "This feature is in Beta.\nIf specified, our system will make a best effort to sample deterministically, such that repeated requests with the same `seed` and parameters should return the same result.\nDeterminism is not guaranteed, and you should refer to the `system_fingerprint` response parameter to monitor changes in the backend.\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2130706432,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Stop",
+          "description": "Up to 4 sequences where the API will stop generating further tokens.\n",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2139095040,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Temperature",
+          "description": "What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.\n\nWe generally recommend altering this or `top_p` but not both.\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2143289344,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Top p",
+          "description": "An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.\n\nWe generally recommend altering this or `temperature` but not both.\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2145386496,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Tools",
+          "description": "A list of tools the model may call. Currently, only functions are supported as a tool. Use this to provide a list of functions the model may generate JSON inputs for. A max of 128 functions are supported.\n",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2146435072,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Service tier",
+          "description": "Specifies the latency tier to use for processing the request. This parameter is relevant for customers subscribed to the scale tier service:\n  - If set to 'auto', and the Project is Scale tier enabled, the system will utilize scale tier credits until they are exhausted. \n  - If set to 'auto', and the Project is not Scale tier enabled, the request will be processed using the default service tier with a lower uptime SLA and no latency guarentee.\n  - If set to 'default', the request will be processed using the default service tier with a lower uptime SLA and no latency guarentee.\n  - When not set, the default behavior is 'auto'.\n\n  When this parameter is set, the response body will include the `service_tier` utilized.\n",
+          "required": false,
+          "type": "OPTION",
+          "ranking": 2146959360,
+          "value": "\"\"",
+          "options": [
+            "auto",
+            "default"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Tool choice",
+          "description": "Controls which (if any) tool is called by the model. none means the model will not call any tool and instead generates a message. auto means the model can pick between generating a message or calling one or more tools. required means the model must call one or more tools. Specifying a particular tool via {\"type\": \"function\", \"function\": {\"name\": \"my_function\"}} forces the model to call that tool.",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2147221504,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Stream options",
+          "description": "Options for streaming response. Only set this when you set stream: true.",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2147352576,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Parallel tool calls",
+          "description": "Whether to enable parallel function calling during tool use.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147418112,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Frequency penalty",
+          "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.\n\n[See more information about frequency and presence penalties.](https://platform.openai.com/docs/guides/text-generation)\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2147450880,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Max completion tokens",
+          "description": "An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and [reasoning tokens](https://platform.openai.com/docs/guides/reasoning).\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2147467264,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Presence penalty",
+          "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.\n\n[See more information about frequency and presence penalties.](https://platform.openai.com/docs/guides/text-generation)\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2147475456,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Stream",
+          "description": "If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message. [Example Python code](https://cookbook.openai.com/examples/how_to_stream_completions).\n",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147479552,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "User",
+          "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids).\n",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147481600,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Response format",
+          "description": "An object specifying the format that the model must output. Compatible with [GPT-4o](https://platform.openai.com/docs/models#gpt-4o), [GPT-4o mini](https://platform.openai.com/docs/models#gpt-4o-mini), [GPT-4 Turbo](https://platform.openai.com/docs/models#gpt-4-and-gpt-4-turbo) and all GPT-3.5 Turbo models newer than `gpt-3.5-turbo-1106`.\n\nSetting to `{ \"type\": \"json_schema\", \"json_schema\": {...} }` enables Structured Outputs which ensures the model will match your supplied JSON schema. Learn more in the [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).\n\nSetting to `{ \"type\": \"json_object\" }` enables JSON mode, which ensures the message the model generates is valid JSON.\n\n**Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly \"stuck\" request. Also note that the message content may be partially cut off if `finish_reason=\"length\"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.\n",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2147482624,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        }
+      ],
+      "action_guid": "cfce7943d143e25158bd51bd33eb4983",
+      "product": "OpenAI"
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "OpenAI credential",
+          "description": "",
+          "required": true,
+          "type": "CREDENTIAL",
+          "ranking": 0,
+          "value": "\"=CREDENTIAL.openai\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Model",
+          "description": "ID of the model to use. See the model endpoint compatibility table for details on which models work with the Chat API.",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 1073741824,
+          "value": "\"gpt-4o\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Messages",
+          "description": "A list of messages comprising the conversation so far. [Example Python code](https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models).",
+          "required": true,
+          "type": "OBJECT",
+          "ranking": 1610612736,
+          "value": "[{\"role\":\"system\",\"content\":\"You are an expert Fantasy Football manager with in-depth knowledge of Yahoo Fantasy Football's API, player stats, injury reports, and roster optimization strategies.\"},{\"role\":\"user\",\"content\":\"Your task is to evaluate the current Fantasy Football roster for this week’s matchup, considering both players held in the roster and available free agents. Recommend add/drop actions where an available player has better projected points, fewer injury risks, or fills gaps (e.g., due to bye weeks). Provide recommendations in the following structured array:\\n\\n```json\\n[{\\\"add_player_name\\\": \\\"{player_name}\\\", \\\"drop_player_name\\\": \\\"{player_name}\\\", \\\"rationale\\\": \\\"\\\"}...]\\n```\\n\\nEvaluation Criteria:\\nProjected Points Comparison: Identify available players with higher projected points than those on the current roster in similar positions. Recommend adding these players and dropping lower-projected, less valuable, or riskier roster players.\\nInjury Status Exclusion: Prioritize adding available players over roster players who are on \\\"IR,\\\" \\\"O,\\\" \\\"NFI-R,\\\" or \\\"SUS\\\" injury statuses. Exclude these injured players from starting or bench roles.\\nBye Week Replacement: For any roster player on a bye week, recommend an available player in the same position with the highest projected points.\\n\\n#### Input Variables:\\n- **Current Week**: <<get_current_week.current_week>>\\r\\n- **Current Roster**: <<map_projected_points>>\\r\\n- **Available Players**: <<update_injury_status>>\\r\\n\\r\"}]",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{\"type\":\"array\",\"items\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"system\"],\"description\":\"The role of the message author, in this case system.\"},\"content\":{\"oneOf\":[{\"type\":\"string\"},{\"type\":\"array\"}],\"description\":\"The contents of the system message.\"},\"name\":{\"type\":\"string\",\"description\":\"An optional name for the participant.\"}},\"required\":[\"role\",\"content\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"user\"],\"description\":\"The role of the message author, in this case user.\"},\"content\":{\"oneOf\":[{\"type\":\"string\"},{\"type\":\"array\"}],\"description\":\"The contents of the user message.\"},\"name\":{\"type\":\"string\",\"description\":\"An optional name for the participant.\"}},\"required\":[\"role\",\"content\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"assistant\"],\"description\":\"The role of the message author, in this case assistant.\"},\"content\":{\"oneOf\":[{\"type\":\"string\"},{\"type\":\"array\"},{\"type\":\"null\"}],\"description\":\"The contents of the assistant message.\"},\"refusal\":{\"oneOf\":[{\"type\":\"string\"},{\"type\":\"null\"}],\"description\":\"The refusal message by the assistant.\"},\"name\":{\"type\":\"string\",\"description\":\"An optional name for the participant.\"},\"tool_calls\":{\"type\":\"array\",\"description\":\"The tool calls generated by the model, such as function calls.\"}},\"required\":[\"role\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"role\":{\"type\":\"string\",\"enum\":[\"tool\"],\"description\":\"The role of the message author, in this case tool.\"},\"content\":{\"oneOf\":[{\"type\":\"string\"},{\"type\":\"array\"}],\"description\":\"The contents of the tool message.\"},\"tool_call_id\":{\"type\":\"string\",\"description\":\"Tool call that this message is responding to.\"}},\"required\":[\"role\",\"content\",\"tool_call_id\"],\"additionalProperties\":false}]}}"
+        },
+        {
+          "name": "Logit bias",
+          "description": "Modify the likelihood of specified tokens appearing in the completion.\n\nAccepts a JSON object that maps tokens (specified by their token ID in the tokenizer) to an associated bias value from -100 to 100. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.\n",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 1879048192,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Logprobs",
+          "description": "Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the `content` of `message`.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2013265920,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Top logprobs",
+          "description": "An integer between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability. `logprobs` must be set to `true` if this parameter is used.",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2080374784,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "N",
+          "description": "How many chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep `n` as `1` to minimize costs.",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2113929216,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Seed",
+          "description": "This feature is in Beta.\nIf specified, our system will make a best effort to sample deterministically, such that repeated requests with the same `seed` and parameters should return the same result.\nDeterminism is not guaranteed, and you should refer to the `system_fingerprint` response parameter to monitor changes in the backend.\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2130706432,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Stop",
+          "description": "Up to 4 sequences where the API will stop generating further tokens.\n",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2139095040,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Temperature",
+          "description": "What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.\n\nWe generally recommend altering this or `top_p` but not both.\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2143289344,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Top p",
+          "description": "An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.\n\nWe generally recommend altering this or `temperature` but not both.\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2145386496,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Tools",
+          "description": "A list of tools the model may call. Currently, only functions are supported as a tool. Use this to provide a list of functions the model may generate JSON inputs for. A max of 128 functions are supported.\n",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2146435072,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Service tier",
+          "description": "Specifies the latency tier to use for processing the request. This parameter is relevant for customers subscribed to the scale tier service:\n  - If set to 'auto', and the Project is Scale tier enabled, the system will utilize scale tier credits until they are exhausted. \n  - If set to 'auto', and the Project is not Scale tier enabled, the request will be processed using the default service tier with a lower uptime SLA and no latency guarentee.\n  - If set to 'default', the request will be processed using the default service tier with a lower uptime SLA and no latency guarentee.\n  - When not set, the default behavior is 'auto'.\n\n  When this parameter is set, the response body will include the `service_tier` utilized.\n",
+          "required": false,
+          "type": "OPTION",
+          "ranking": 2146959360,
+          "value": "\"\"",
+          "options": [
+            "auto",
+            "default"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Tool choice",
+          "description": "Controls which (if any) tool is called by the model. none means the model will not call any tool and instead generates a message. auto means the model can pick between generating a message or calling one or more tools. required means the model must call one or more tools. Specifying a particular tool via {\"type\": \"function\", \"function\": {\"name\": \"my_function\"}} forces the model to call that tool.",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2147221504,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Stream options",
+          "description": "Options for streaming response. Only set this when you set stream: true.",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2147352576,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Parallel tool calls",
+          "description": "Whether to enable parallel function calling during tool use.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147418112,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Frequency penalty",
+          "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.\n\n[See more information about frequency and presence penalties.](https://platform.openai.com/docs/guides/text-generation)\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2147450880,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Max completion tokens",
+          "description": "An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and [reasoning tokens](https://platform.openai.com/docs/guides/reasoning).\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2147467264,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Presence penalty",
+          "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.\n\n[See more information about frequency and presence penalties.](https://platform.openai.com/docs/guides/text-generation)\n",
+          "required": false,
+          "type": "NUMBER",
+          "ranking": 2147475456,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Stream",
+          "description": "If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message. [Example Python code](https://cookbook.openai.com/examples/how_to_stream_completions).\n",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147479552,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "User",
+          "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids).\n",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2147481600,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        },
+        {
+          "name": "Response format",
+          "description": "An object specifying the format that the model must output. Compatible with [GPT-4o](https://platform.openai.com/docs/models#gpt-4o), [GPT-4o mini](https://platform.openai.com/docs/models#gpt-4o-mini), [GPT-4 Turbo](https://platform.openai.com/docs/models#gpt-4-and-gpt-4-turbo) and all GPT-3.5 Turbo models newer than `gpt-3.5-turbo-1106`.\n\nSetting to `{ \"type\": \"json_schema\", \"json_schema\": {...} }` enables Structured Outputs which ensures the model will match your supplied JSON schema. Learn more in the [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).\n\nSetting to `{ \"type\": \"json_object\" }` enables JSON mode, which ensures the message the model generates is valid JSON.\n\n**Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly \"stuck\" request. Also note that the message content may be partially cut off if `finish_reason=\"length\"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.\n",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2147482624,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "\"{}\""
+        }
+      ],
+      "action_guid": "3fc19b95676dcc224f472833d8f4efc4",
+      "product": "OpenAI"
+    },
+    {
+      "action_inputs": [
+        {
+          "name": "Channel / User ID",
+          "description": "You can use a channel name (like ‘#general’) or an ID (like ‘C1234567890’). For non-public channels, specify the ID; this includes private channels, multi-person direct message channels (use the group ID), or DMs to a specific user (use the user ID).",
+          "required": true,
+          "type": "TEXT",
+          "ranking": 0,
+          "value": "\" <<RESOURCE.slack_ff_channel>>\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Slack Credential",
+          "description": "",
+          "required": false,
+          "type": "CREDENTIAL",
+          "ranking": 1073741824,
+          "value": "\"=CREDENTIAL.slack_api_token\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon emoji",
+          "description": "Emoji to use as the icon for this message (i.e. :chart_with_upwards_trend:). Overrides Icon URL input.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 1610612736,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Icon URL",
+          "description": "URL to an image to use as the icon for this message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 1879048192,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Link names?",
+          "description": "Find and link user groups. No longer supports linking individual users; use syntax shown in [Mentioning Users](https://api.slack.com/reference/surfaces/formatting#mentioning-users) instead.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2013265920,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Metadata",
+          "description": "JSON object with event_type and event_payload fields, presented as a URL-encoded string. Metadata you post to Slack is accessible to any app or user who is a member of that workspace. ex: {\"event_type\": \"task_created\", \"event_payload\": { \"id\": \"11223\", \"title\": \"Redesign Homepage\"}}",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2080374784,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Markdown",
+          "description": "Select 'no' to disable Slack markup parsing. Enabled by default.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2113929216,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Parse",
+          "description": "Change how messages are treated. See [further details](https://api.slack.com/methods/chat.postMessage#formatting).",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2130706432,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Send reply to channel?",
+          "description": "Used in conjunction with input 'Thread timestamp' and indicates whether reply should be made visible to everyone in the channel or conversation. Defaults to false.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2139095040,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Thread timestamp",
+          "description": "Provide another message's ts value to make this message a reply. Avoid using a reply's ts value; use its parent instead.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2143289344,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl media?",
+          "description": "Select 'no' to disable unfurling of media content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2145386496,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Username",
+          "description": "Specify your bot's username that will send the message.",
+          "required": false,
+          "type": "TEXT",
+          "ranking": 2146435072,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Message",
+          "description": "Use [Slack's Block Kit Builder](https://app.slack.com/block-kit-builder) to build your message. Then, click the 'Copy Payload' button on the top right of the block kit builder and paste it into the ‘Plain code’ tab here when you’re done. ",
+          "required": false,
+          "type": "OBJECT",
+          "ranking": 2146959360,
+          "value": "{\"blocks\":\"=CONCAT([slack_header], MAP(format_suggestions, \\\"suggestion\\\")) |> FLATTEN(%)\"}",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": false,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        },
+        {
+          "name": "Unfurl links?",
+          "description": "Select 'yes' to enable unfurling of primarily text-based content.",
+          "required": false,
+          "type": "BOOLEAN",
+          "ranking": 2147221504,
+          "value": "\"\"",
+          "options": [
+            "Option 1",
+            "Option 2"
+          ],
+          "is_collapsed": true,
+          "sub_type": "HTML",
+          "multi_select_enabled": false,
+          "llm_json_schema": "{}"
+        }
+      ],
+      "action_guid": "20201e5de3725e2fc4707c4e6b1f1155",
+      "product": "Slack"
+    }
+  ]
+}
