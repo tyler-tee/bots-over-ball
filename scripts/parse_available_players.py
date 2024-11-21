@@ -7,7 +7,7 @@ def main():
                 "sort": "PTS",
                 "sdir": "1",
                 "status": "A",
-                "pos": "DEF", # Update to 'O' to pull in offensive players
+                "pos": "DEF",  # Update to 'O' to pull in offensive players
                 "stat1": "S_PS_2024"
             }
 
