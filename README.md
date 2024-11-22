@@ -1,5 +1,8 @@
 ## Overview
 
+![SonarCloud Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=tyler-tee_bots-over-ball&metric=alert_status)
+
+
 This repo has been setup to serve companion content for the article [Bots Over Ball: Fantasy Football Automated](https://www.lambdasandlapdogs.com/blog/bots-over-ball-fantasy-football-automated), this repository provides a ready-to-import Tines story and a full set of Python scripts to handle roster management, player stats, and injury updates—no football knowledge required.
 
 Included:
