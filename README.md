@@ -35,7 +35,3 @@ Included:
 ## License
 
 This project is licensed under the MIT License.
-
----
-
-Let me know if this hits the mark or if there are any additional details you’d like included!
